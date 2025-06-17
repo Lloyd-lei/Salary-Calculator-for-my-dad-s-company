@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iPhone计算器</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0e1117;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+        /* 禁用所有音效 */
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .calculator {
+        width: 350px;
+        min-height: 1px;
+        background: #1c1c1e;
+        border-radius: 30px;
+        padding: 30px 20px 30px 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        /* 确保完整显示 */
+        max-width: 100%;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .display-container {
+        flex: 1;
+        min-height: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .expression {
+        color: #8e8e93;
+        font-size: 18px;
+        font-weight: 300;
+        text-align: right;
+        min-height: 35px;
+        padding: 10px 20px 5px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .display {
+        color: white;
+        font-size: 55px;
+        font-weight: 200;
+        text-align: right;
+        min-height: 90px;
+        padding: 5px 20px 15px;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.1;
+      }
+
+      .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 25px;
+        flex-shrink: 0;
+      }
+
+      .btn {
+        height: 70px;
+        border: none;
+        border-radius: 50%;
+        font-size: 28px;
+        font-weight: 400;
+        cursor: pointer;
+        transition: all 0.1s ease;
+        outline: none;
+        user-select: none;
+        /* 禁用音效和反馈 */
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+
+      .btn:active {
+        transform: scale(0.95);
+      }
+
+      .btn-function {
+        background: #a6a6a6;
+        color: black;
+      }
+
+      .btn-function:hover {
+        background: #d4d4d2;
+      }
+
+      .btn-number {
+        background: #333333;
+        color: white;
+      }
+
+      .btn-number:hover {
+        background: #4a4a4a;
+      }
+
+      .btn-operator {
+        background: #ff9f0a;
+        color: white;
+      }
+
+      .btn-operator:hover {
+        background: #ffb143;
+      }
+
+      .btn-operator.active {
+        background: white;
+        color: #ff9f0a;
+      }
+
+      .btn-zero {
+        grid-column: span 2;
+        border-radius: 35px;
+        text-align: left;
+        padding-left: 30px;
+      }
+
+      .keyboard-hint {
+        text-align: center;
+        color: #8e8e93;
+        font-size: 12px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        margin: 0;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator">
+      <div class="display-container">
+        <div class="expression" id="expression"></div>
+        <div class="display" id="display">0</div>
+      </div>
+
+      <div class="buttons">
+        <!-- 第一行 -->
+        <button
+          class="btn btn-function"
+          onclick="handleClick('CLEAR')"
+          id="clear-btn"
+        >
+          C
+        </button>
+        <button class="btn btn-function" onclick="handleClick('±')">±</button>
+        <button class="btn btn-function" onclick="handleClick('%')">%</button>
+        <button class="btn btn-operator" onclick="handleClick('÷')" data-op="÷">
+          ÷
+        </button>
+
+        <!-- 第二行 -->
+        <button class="btn btn-number" onclick="handleClick('7')">7</button>
+        <button class="btn btn-number" onclick="handleClick('8')">8</button>
+        <button class="btn btn-number" onclick="handleClick('9')">9</button>
+        <button class="btn btn-operator" onclick="handleClick('×')" data-op="×">
+          ×
+        </button>
+
+        <!-- 第三行 -->
+        <button class="btn btn-number" onclick="handleClick('4')">4</button>
+        <button class="btn btn-number" onclick="handleClick('5')">5</button>
+        <button class="btn btn-number" onclick="handleClick('6')">6</button>
+        <button class="btn btn-operator" onclick="handleClick('-')" data-op="-">
+          −
+        </button>
+
+        <!-- 第四行 -->
+        <button class="btn btn-number" onclick="handleClick('1')">1</button>
+        <button class="btn btn-number" onclick="handleClick('2')">2</button>
+        <button class="btn btn-number" onclick="handleClick('3')">3</button>
+        <button class="btn btn-operator" onclick="handleClick('+')" data-op="+">
+          +
+        </button>
+
+        <!-- 第五行 -->
+        <button class="btn btn-number btn-zero" onclick="handleClick('0')">
+          0
+        </button>
+        <button class="btn btn-number" onclick="handleClick('.')">.</button>
+        <button class="btn btn-operator" onclick="handleClick('=')" data-op="=">
+          =
+        </button>
+      </div>
+
+      <div class="keyboard-hint">
+        ⌨️ 支持键盘操作: 数字键、运算符 +-*/=、Delete清除、.小数点
+      </div>
+    </div>
+
+    <script>
+      class iPhoneCalculator {
+        constructor() {
+          this.display = document.getElementById("display");
+          this.expression = document.getElementById("expression");
+          this.clearBtn = document.getElementById("clear-btn");
+
+          this.currentValue = "0";
+          this.previousValue = null;
+          this.operator = null;
+          this.waitingForOperand = false;
+          this.expressionText = "";
+          this.shouldResetDisplay = false;
+          this.hasCalculated = false; // 新增：标记是否已经计算完成
+
+          this.setupKeyboardListener();
+
+          // 禁用页面的默认音效
+          this.disableAudioFeedback();
+        }
+
+        disableAudioFeedback() {
+          // 禁用所有音效和振动反馈
+          document.addEventListener(
+            "touchstart",
+            function (e) {
+              e.preventDefault();
+            },
+            { passive: false }
+          );
+
+          // 禁用键盘音效
+          document.addEventListener("keydown", function (e) {
+            if (e.target === document.body) {
+              e.preventDefault();
+            }
+          });
+        }
+
+        setupKeyboardListener() {
+          document.addEventListener("keydown", (event) => {
+            const key = event.key;
+
+            // 防止默认行为和音效
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (/[0-9]/.test(key)) {
+              this.handleClick(key);
+            } else if (["+", "-", "*", "/", "=", "Enter"].includes(key)) {
+              if (key === "*") this.handleClick("×");
+              else if (key === "/") this.handleClick("÷");
+              else if (key === "Enter" || key === "=") this.handleClick("=");
+              else this.handleClick(key);
+            } else if (key === ".") {
+              this.handleClick(".");
+            } else if (
+              key === "Delete" ||
+              key === "Backspace" ||
+              key === "c" ||
+              key === "C" ||
+              key === "Escape"
+            ) {
+              // 映射 Delete键 到 C/AC 功能
+              this.handleClick("CLEAR");
+            } else if (key === "%") {
+              this.handleClick("%");
+            }
+          });
+        }
+
+        handleClick(value) {
+          if (/[0-9]/.test(value)) {
+            this.inputNumber(value);
+          } else if (value === ".") {
+            this.inputDecimal();
+          } else if (["+", "-", "×", "÷"].includes(value)) {
+            this.inputOperation(value);
+          } else if (value === "=") {
+            this.calculate();
+          } else if (value === "CLEAR") {
+            this.clearAction();
+          } else if (value === "±") {
+            this.toggleSign();
+          } else if (value === "%") {
+            this.percentage();
+          }
+
+          this.updateDisplay();
+          this.updateOperatorButtons();
+        }
+
+        inputNumber(number) {
+          if (this.waitingForOperand || this.shouldResetDisplay) {
+            this.currentValue = number;
+            this.waitingForOperand = false;
+            this.hasCalculated = false; // 开始新的输入
+
+            if (this.shouldResetDisplay) {
+              this.expressionText = number;
+              this.shouldResetDisplay = false;
+            } else if (this.operator && this.previousValue !== null) {
+              // 如果有运算符，继续构建表达式
+              this.expressionText += number;
+            } else {
+              this.expressionText = number;
+            }
+          } else {
+            this.currentValue =
+              this.currentValue === "0" ? number : this.currentValue + number;
+            this.hasCalculated = false; // 正在输入
+
+            // 更新表达式文本
+            if (this.operator && this.previousValue !== null) {
+              // 如果在等待第二个操作数，更新表达式的最后部分
+              const parts = this.expressionText.split(" ");
+              if (parts.length >= 3) {
+                parts[parts.length - 1] = this.currentValue;
+                this.expressionText = parts.join(" ");
+              } else {
+                this.expressionText += number;
+              }
+            } else {
+              this.expressionText = this.currentValue;
+            }
+          }
+        }
+
+        inputDecimal() {
+          this.hasCalculated = false; // 正在输入
+
+          if (this.waitingForOperand) {
+            this.currentValue = "0.";
+            this.waitingForOperand = false;
+            this.expressionText += "0.";
+          } else if (this.currentValue.indexOf(".") === -1) {
+            this.currentValue += ".";
+
+            // 更新表达式
+            if (this.operator && this.previousValue !== null) {
+              const parts = this.expressionText.split(" ");
+              if (parts.length >= 3) {
+                parts[parts.length - 1] = this.currentValue;
+                this.expressionText = parts.join(" ");
+              } else {
+                this.expressionText += ".";
+              }
+            } else {
+              this.expressionText = this.currentValue;
+            }
+          }
+        }
+
+        inputOperation(nextOperator) {
+          const inputValue = parseFloat(this.currentValue);
+          this.hasCalculated = false; // 正在操作
+
+          if (this.previousValue === null) {
+            this.previousValue = inputValue;
+            this.expressionText =
+              this.formatNumber(inputValue) + " " + nextOperator + " ";
+          } else if (this.operator && !this.waitingForOperand) {
+            const currentValue = this.previousValue || 0;
+            const newValue = this.performCalculation(
+              currentValue,
+              inputValue,
+              this.operator
+            );
+
+            this.currentValue = String(newValue);
+            this.previousValue = newValue;
+            this.expressionText =
+              this.formatNumber(newValue) + " " + nextOperator + " ";
+
+            this.updateDisplay();
+          } else {
+            // 如果正在等待操作数，只是更换运算符
+            this.expressionText =
+              this.expressionText.slice(0, -2) + nextOperator + " ";
+          }
+
+          this.waitingForOperand = true;
+          this.operator = nextOperator;
+        }
+
+        calculate() {
+          if (
+            this.operator &&
+            this.previousValue !== null &&
+            !this.waitingForOperand
+          ) {
+            const inputValue = parseFloat(this.currentValue);
+            const newValue = this.performCalculation(
+              this.previousValue,
+              inputValue,
+              this.operator
+            );
+
+            // 更新表达式显示完整的计算过程
+            this.expressionText =
+              this.formatNumber(this.previousValue) +
+              " " +
+              this.operator +
+              " " +
+              this.formatNumber(inputValue) +
+              " = " +
+              this.formatNumber(newValue);
+
+            this.currentValue = String(newValue);
+            this.previousValue = null;
+            this.operator = null;
+            this.waitingForOperand = true;
+            this.shouldResetDisplay = true;
+            this.hasCalculated = true; // 标记已计算完成
+          }
+        }
+
+        clearAction() {
+          if (this.hasCalculated) {
+            // 计算完成后：AC 全部清除
+            this.allClear();
+          } else {
+            // 输入过程中：C 删除上一位
+            this.backspace();
+          }
+        }
+
+        allClear() {
+          this.currentValue = "0";
+          this.previousValue = null;
+          this.operator = null;
+          this.waitingForOperand = false;
+          this.expressionText = "";
+          this.shouldResetDisplay = false;
+          this.hasCalculated = false;
+        }
+
+        backspace() {
+          if (this.currentValue.length > 1) {
+            this.currentValue = this.currentValue.slice(0, -1);
+          } else {
+            this.currentValue = "0";
+          }
+
+          // 更新表达式
+          if (this.operator && this.previousValue !== null) {
+            const parts = this.expressionText.split(" ");
+            if (parts.length >= 3) {
+              parts[parts.length - 1] = this.currentValue;
+              this.expressionText = parts.join(" ");
+            }
+          } else {
+            this.expressionText = this.currentValue;
+          }
+        }
+
+        performCalculation(firstOperand, secondOperand, operator) {
+          switch (operator) {
+            case "+":
+              return firstOperand + secondOperand;
+            case "-":
+              return firstOperand - secondOperand;
+            case "×":
+              return firstOperand * secondOperand;
+            case "÷":
+              if (secondOperand === 0) {
+                alert("不能除以零");
+                return firstOperand;
+              }
+              return firstOperand / secondOperand;
+            default:
+              return secondOperand;
+          }
+        }
+
+        toggleSign() {
+          if (this.currentValue !== "0") {
+            this.currentValue = this.currentValue.startsWith("-")
+              ? this.currentValue.slice(1)
+              : "-" + this.currentValue;
+
+            // 更新表达式中的当前数字
+            if (this.operator && this.previousValue !== null) {
+              const parts = this.expressionText.split(" ");
+              if (parts.length >= 3) {
+                parts[parts.length - 1] = this.currentValue;
+                this.expressionText = parts.join(" ");
+              }
+            } else {
+              this.expressionText = this.currentValue;
+            }
+          }
+          this.hasCalculated = false; // 正在操作
+        }
+
+        percentage() {
+          this.currentValue = String(parseFloat(this.currentValue) / 100);
+          this.hasCalculated = false; // 正在操作
+
+          // 更新表达式
+          if (this.operator && this.previousValue !== null) {
+            const parts = this.expressionText.split(" ");
+            if (parts.length >= 3) {
+              parts[parts.length - 1] = this.currentValue;
+              this.expressionText = parts.join(" ");
+            }
+          } else {
+            this.expressionText = this.currentValue;
+          }
+        }
+
+        formatNumber(num) {
+          const number = parseFloat(num);
+          if (isNaN(number)) return "0";
+
+          // 如果是整数，直接返回
+          if (number === Math.floor(number)) {
+            // 检查整数是否太长
+            const intStr = String(Math.floor(number));
+            if (intStr.length > 9) {
+              return number.toExponential(3);
+            }
+            return intStr;
+          }
+
+          // 小数处理
+          let formatted = number.toFixed(4).replace(/\.?0+$/, "");
+
+          // 如果格式化后的数字超过9位，使用科学计数法
+          if (formatted.length > 9) {
+            if (
+              Math.abs(number) >= 1000000 ||
+              (Math.abs(number) < 0.001 && number !== 0)
+            ) {
+              formatted = number.toExponential(3);
+            } else {
+              // 对于中等大小的数字，使用更少的小数位
+              formatted = number.toPrecision(6).replace(/\.?0+$/, "");
+              if (formatted.length > 9) {
+                formatted = number.toExponential(3);
+              }
+            }
+          }
+
+          return formatted;
+        }
+
+        updateDisplay() {
+          this.display.textContent = this.formatNumber(this.currentValue);
+          this.expression.textContent = this.expressionText;
+
+          // 根据iPhone逻辑更新清除按钮
+          if (this.hasCalculated) {
+            // 计算完成后显示AC（全部清除）
+            this.clearBtn.textContent = "AC";
+          } else if (
+            this.currentValue !== "0" ||
+            this.previousValue !== null ||
+            this.operator !== null
+          ) {
+            // 有输入或操作时显示C（删除上一位）
+            this.clearBtn.textContent = "C";
+          } else {
+            // 初始状态显示C
+            this.clearBtn.textContent = "C";
+          }
+        }
+
+        updateOperatorButtons() {
+          // 移除所有激活状态
+          document.querySelectorAll(".btn-operator").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+
+          // 如果有选中的操作符，高亮显示
+          if (this.operator && this.waitingForOperand) {
+            const activeButton = document.querySelector(
+              `[data-op="${this.operator}"]`
+            );
+            if (activeButton) {
+              activeButton.classList.add("active");
+            }
+          }
+        }
+      }
+
+      // 初始化计算器
+      const calculator = new iPhoneCalculator();
+
+      // 全局函数供按钮调用
+      function handleClick(value) {
+        calculator.handleClick(value);
+      }
+
+      // 聚焦文档以接收键盘事件
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.focus();
+        document.body.setAttribute("tabindex", "0");
+      });
+
+      // 禁用音效和反馈
+      document.addEventListener("selectstart", function (e) {
+        e.preventDefault();
+      });
+
+      document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+      });
+    </script>
+  </body>
+</html>
