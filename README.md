@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 一个简单但功能强大、易于使用的工资计算器，专为中小企业设计。支持多平台运行，局域网访问，手机端操作。
-streamlit自带配置好的8501端口，前后端一体。后期可依靠streamlit框架但是采用前后端分离。内置一个苹果自带的计算，方便记账时随手演算，使用该app时可以丢掉你的鼠标。Anna再也不用被Chris和Constance给PUA了。
+streamlit自带配置好的8501端口，前后端一体。后期可依靠streamlit框架但是采用前后端分离。内置一个苹果自带的计算器，方便记账时随手演算，使用该app时可以丢掉你的鼠标。Anna再也不用被Chris和Constance给PUA了。
 该项目为一个springboot项目的mvc，后期会和整个springboot的项目连接，敬请期待！！！
 
 ## 🎯 项目特色
