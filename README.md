@@ -1,10 +1,12 @@
-# 💰 工资计算器 - 专业的企业工资管理系统
+# 💰 工资计算器 
 
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Latest-red.svg)](https://streamlit.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-一个功能强大、易于使用的工资计算器，专为中小企业设计。支持多平台运行，局域网访问，手机端操作。
+一个简单但功能强大、易于使用的工资计算器，专为中小企业设计。支持多平台运行，局域网访问，手机端操作。
+streamlit自带配置好的8501端口，前后端一体。后期可依靠streamlit框架但是采用前后端分离。内置一个苹果自带的计算，方便记账时随手演算，使用该app时可以丢掉你的鼠标。Anna再也不用被Chris和Constance给PUA了。
+该项目为一个springboot项目的mvc，后期会和整个springboot的项目连接，敬请期待！！！
 
 ## 🎯 项目特色
 
@@ -151,6 +153,7 @@ python start_app.py
 
 ### 适用企业
 
+- 自家公司
 - 中小型企业 HR 部门
 - 财务工资核算
 - 个体工商户
